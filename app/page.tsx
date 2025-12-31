@@ -43,19 +43,114 @@ interface PriorityData {
   avgPerformance: string;
 }
 
-// Matérias do edital com pesos reais
-const MATERIAS_EDITAL = [
-  { nome: 'Língua Portuguesa', questoes: 20, tipo: 'geral' as const, dificuldade: 3 },
-  { nome: 'Raciocínio Lógico e Analítico', questoes: 15, tipo: 'geral' as const, dificuldade: 4 },
-  { nome: 'Direito Administrativo', questoes: 20, tipo: 'geral' as const, dificuldade: 4 },
-  { nome: 'Administração Pública', questoes: 15, tipo: 'geral' as const, dificuldade: 3 },
-  { nome: 'Noções de Informática', questoes: 10, tipo: 'geral' as const, dificuldade: 2 },
-  { nome: 'Atualidades', questoes: 10, tipo: 'geral' as const, dificuldade: 2 },
-  { nome: 'Regimento Interno da Câmara', questoes: 30, tipo: 'especifico' as const, dificuldade: 5 },
-  { nome: 'Direito Constitucional', questoes: 25, tipo: 'especifico' as const, dificuldade: 4 },
-  { nome: 'Processo Legislativo', questoes: 20, tipo: 'especifico' as const, dificuldade: 4 },
-  { nome: 'Gestão Pública e Orçamento', questoes: 15, tipo: 'especifico' as const, dificuldade: 4 },
+// Configuração das matérias (edite este objeto para personalizar)
+// ⚠️ ATENÇÃO: O edital NÃO especifica o número exato de questões por matéria!
+// Os valores abaixo são ESTIMATIVAS baseadas em concursos anteriores.
+// Ajuste conforme você descobre a distribuição real ou conforme sua estratégia.
+
+interface SubjectConfig {
+  nome: string;
+  questoes: number; // ESTIMATIVA - ajuste conforme necessário
+  tipo: 'geral' | 'especifico';
+  dificuldade: number; // 1-5 (sua percepção de dificuldade)
+  meuNivel: number; // 0-10 (quanto você já sabe)
+  topicos?: string[]; // tópicos principais para referência
+  pesoReal?: number; // peso que você quer dar (sobrescreve questoes)
+}
+
+const MATERIAS_CONFIG: SubjectConfig[] = [
+  // ========================================
+  // CONHECIMENTOS GERAIS (90 questões no total)
+  // ========================================
+  { 
+    nome: 'Língua Portuguesa', 
+    questoes: 20, // ESTIMATIVA - edital não especifica
+    tipo: 'geral', 
+    dificuldade: 3, // Ajuste: 1=muito fácil, 5=muito difícil
+    meuNivel: 7, // Ajuste: 0=nada, 10=expert
+    topicos: ['Interpretação de texto', 'Gramática', 'Redação oficial']
+  },
+  { 
+    nome: 'Raciocínio Lógico e Analítico', 
+    questoes: 15, // ESTIMATIVA
+    tipo: 'geral', 
+    dificuldade: 4,
+    meuNivel: 5,
+    topicos: ['Lógica proposicional', 'Análise combinatória', 'Probabilidade']
+  },
+  { 
+    nome: 'Direito Administrativo', 
+    questoes: 20, // ESTIMATIVA
+    tipo: 'geral', 
+    dificuldade: 4,
+    meuNivel: 4,
+    topicos: ['Atos administrativos', 'Licitações', 'Servidores públicos']
+  },
+  { 
+    nome: 'Administração Pública', 
+    questoes: 15, // ESTIMATIVA
+    tipo: 'geral', 
+    dificuldade: 3,
+    meuNivel: 5,
+    topicos: ['Gestão de pessoas', 'Processos', 'Governança']
+  },
+  { 
+    nome: 'Noções de Informática', 
+    questoes: 10, // ESTIMATIVA - geralmente são questões básicas
+    tipo: 'geral', 
+    dificuldade: 2, // Costuma ser básico: Windows, Word, Excel, Internet
+    meuNivel: 8,
+    topicos: ['Windows', 'Word/Excel', 'Segurança da informação', 'Internet']
+  },
+  { 
+    nome: 'Atualidades', 
+    questoes: 10, // ESTIMATIVA
+    tipo: 'geral', 
+    dificuldade: 2,
+    meuNivel: 6,
+    topicos: ['Política', 'Economia', 'Sociedade']
+  },
+  
+  // ========================================
+  // CONHECIMENTOS ESPECÍFICOS (90 questões no total)
+  // ========================================
+  { 
+    nome: 'Regimento Interno da Câmara', 
+    questoes: 30, // ESTIMATIVA - mas certamente é a matéria MAIS PESADA
+    tipo: 'especifico', 
+    dificuldade: 5, // Muito específico e denso
+    meuNivel: 2, // Matéria crítica!
+    topicos: ['Comissões', 'Processo legislativo', 'Mesa Diretora', 'Votações'],
+    pesoReal: 35 // Se quiser dar peso extra por ser crítica
+  },
+  { 
+    nome: 'Direito Constitucional', 
+    questoes: 25, // ESTIMATIVA
+    tipo: 'especifico', 
+    dificuldade: 4,
+    meuNivel: 5,
+    topicos: ['Direitos fundamentais', 'Organização do Estado', 'Poder Legislativo']
+  },
+  { 
+    nome: 'Processo Legislativo', 
+    questoes: 20, // ESTIMATIVA
+    tipo: 'especifico', 
+    dificuldade: 4,
+    meuNivel: 3,
+    topicos: ['Tipos de leis', 'Tramitação', 'Emendas', 'Vetos']
+  },
+  { 
+    nome: 'Gestão Pública e Orçamento', 
+    questoes: 15, // ESTIMATIVA
+    tipo: 'especifico', 
+    dificuldade: 4,
+    meuNivel: 4,
+    topicos: ['LOA', 'LDO', 'PPA', 'Execução orçamentária']
+  },
 ];
+
+// 💡 DICA: Quando sair o gabarito ou você descobrir a distribuição real,
+// volte aqui e ajuste os números de questões!
 
 export default function ConcursoStudySystem() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -100,7 +195,7 @@ export default function ConcursoStudySystem() {
   };
 
   const initializeSubjects = () => {
-    const initialSubjects: Subject[] = MATERIAS_EDITAL.map(m => ({
+    const initialSubjects: Subject[] = MATERIAS_CONFIG.map(m => ({
       id: m.nome,
       nome: m.nome,
       questoes: m.questoes,
@@ -111,9 +206,16 @@ export default function ConcursoStudySystem() {
       prioridade: 0
     }));
     
+    // Inicializa os níveis de conhecimento do config
+    const initialLevels: KnowledgeLevels = {};
+    MATERIAS_CONFIG.forEach(m => {
+      initialLevels[m.nome] = m.meuNivel;
+    });
+    
     setSubjects(initialSubjects);
+    setKnowledgeLevels(initialLevels);
     setInitialized(true);
-    saveData(initialSubjects, exercises, knowledgeLevels);
+    saveData(initialSubjects, exercises, initialLevels);
   };
 
   const updateKnowledgeLevel = (subjectName: string, level: string) => {
@@ -163,7 +265,10 @@ export default function ConcursoStudySystem() {
     const knowledgeLevel = knowledgeLevels[subject.nome] || 5;
     const knowledgeGap = 10 - knowledgeLevel;
     
-    const weight = subject.questoes;
+    // Usa pesoReal se existir, senão usa questoes
+    const configSubject = MATERIAS_CONFIG.find(m => m.nome === subject.nome);
+    const weight = configSubject?.pesoReal || subject.questoes;
+    
     const difficulty = subject.dificuldade;
     const studyGap = Math.max(0, subject.metaHoras - subject.horasEstudadas);
     const typeMultiplier = subject.tipo === 'especifico' ? 1.2 : 1.0;
@@ -291,7 +396,7 @@ Seja DIRETO, PRÁTICO e MOTIVADOR. Use números e seja específico.`;
 
   if (!initialized) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 p-4 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 flex items-center justify-center">
         <Card className="max-w-2xl">
           <CardHeader>
             <CardTitle className="text-2xl">Bem-vindo ao Sistema de Estudos</CardTitle>
@@ -301,9 +406,13 @@ Seja DIRETO, PRÁTICO e MOTIVADOR. Use números e seja específico.`;
             <Alert>
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
-                <strong>Edital carregado:</strong> 180 questões (90 gerais + 90 específicas)<br/>
-                Sistema Cebraspe (Certo/Errado com penalização)<br/>
-                Salário: R$ 30.853,99
+                <strong>⚠️ IMPORTANTE:</strong><br/>
+                • Distribuição de questões por matéria é ESTIMATIVA<br/>
+                • Edital não especifica números exatos<br/>
+                • Você pode ajustar no código (MATERIAS_CONFIG)<br/>
+                • 180 questões: 90 gerais + 90 específicas (isso é certo!)<br/>
+                <br/>
+                💡 <strong>Dica:</strong> Edite seus níveis e ajuste pesos conforme sua estratégia
               </AlertDescription>
             </Alert>
             <p className="text-gray-600">
@@ -324,7 +433,7 @@ Seja DIRETO, PRÁTICO e MOTIVADOR. Use números e seja específico.`;
   const prioritySubjects = getPrioritySubjects();
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="text-center py-6">
           <h1 className="text-4xl font-bold text-indigo-900 mb-2">Sistema de Estudos Inteligente</h1>
